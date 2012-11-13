@@ -3,6 +3,48 @@
 <body>
 
 	<h1>Chat</h1>
+	
+	Username: <input type="text" id="username" />
+
+	<div id="chatbox" style="border: 1px solid black; min-height:400px; width: 600px">
+		
+	</div>
+
+	<input type="text" id="inputbox" />
+	<button onclick="sendMsg()">Send</button>
+	<button onclick="clearChat()">Clear</button>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	  var socket = io.connect('http://justinkchat3.azurewebsites.net/');
+	  socket.on('news', function (data) {
+	  	pushToMsgbox("Server", data.msg);
+	  });
+
+	  socket.on('message', function(data) {
+	  	pushToMsgbox(data.from, data.msg);
+	  });
+
+	  function sendMsg() 
+	  {
+	  	var username = document.getElementById("username").value;
+	  	var msgToSend =  document.getElementById("inputbox").value;
+
+	  	socket.emit('message', {from: username, msg: msgToSend});
+	  	pushToMsgbox("You", msgToSend);
+	  }
+
+	  function pushToMsgbox(sender, msg)
+	  {
+	  	var text = sender + ": " + msg + "<br />";
+	  	document.getElementById("chatbox").innerHTML += text;
+	  }
+
+	  function clearChat()
+	  {
+	  	document.getElementById("chatbox").innerHTML = "";
+	  }
+	</script>
 
 </body>
 </html>
